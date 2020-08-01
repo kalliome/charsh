@@ -9,13 +9,13 @@ const { initApp } = require('./api/init')
 
 const api = require('./api/router')
 
-app.get('/', async (req, res) => {
+app.use('/api', api)
+
+app.get('*', async (req, res) => {
   res.json({
     message: 'Hello World'
   })
 })
 
-app.use('/api', api)
-
-initApp()
+initApp(app)
 .then(() => app.listen(parseInt(PORT), () => console.log(`Api up @${PORT}`)))

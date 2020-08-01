@@ -19,9 +19,8 @@ db.user = sequelize.define('user', {
     type: types.STRING(12),
     primaryKey: true
   },
-  username: {
+  nickname: {
     type: types.STRING,
-    unique: true,
     allowNull: false
   },
   password: {

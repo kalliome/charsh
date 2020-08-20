@@ -15,7 +15,7 @@ const db = {
  */ 
 
 db.user = sequelize.define('user', {
-  uid: {
+  id: {
     type: types.STRING(12),
     primaryKey: true
   },
@@ -30,5 +30,71 @@ db.user = sequelize.define('user', {
 }, {
   underscored: true
 })
+
+db.game = sequelize.define('game', {
+  id: {
+    type: types.STRING(12),
+    primaryKey: true 
+  },
+  name: {
+    type: types.STRING,
+    allowNull: false 
+  },
+  data: {
+    type: types.JSONB,
+    allowNull: false
+  }
+}, {
+  underscored: true
+})
+
+db.user.hasMany(db.game)
+
+db.sheet = sequelize.define('sheet', {
+  id: {
+    type: types.STRING(12),
+    primaryKey: true 
+  },
+  name: {
+    type: types.STRING,
+    allowNull: false 
+  },
+  type: { 
+    type: types.STRING,
+    allowNull: false 
+  },
+  data: {
+    type: types.JSONB,
+    allowNull: false
+  }
+}, {
+  underscored: true
+})
+
+db.user.hasMany(db.sheet)
+
+db.scene = sequelize.define('scene', {
+  id: {
+    type: types.STRING(12),
+    primaryKey: true 
+  },
+  name: {
+    type: types.STRING,
+    allowNull: false 
+  },
+  type: {
+    type: types.STRING,
+    allowNull: false 
+  },
+  data: {
+    type: types.JSONB,
+    allowNull: false
+  }
+}, {
+  underscored: true
+})
+
+db.game.hasMany(db.scene)
+db.game.hasMany(db.sheet)
 
 exports.db = db

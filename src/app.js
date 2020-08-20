@@ -1,10 +1,14 @@
 import React from 'react'
+import { BrowserRouter as Router } from 'react-router-dom'
+import { AuthProvider } from './auth/authContext'
 
 function App() {
   return (
-    <div className="App">
-      Testing
-    </div>
+    <AuthProvider>
+      <Router>
+        <Route path="/login" component={Login} />
+      </Router>
+    </AuthProvider>
   )
 }
 

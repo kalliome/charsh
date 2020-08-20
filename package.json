@@ -11,6 +11,7 @@
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
     "react-router": "^5.2.0",
+    "react-router-dom": "^5.2.0",
     "react-scripts": "3.4.1",
     "socket.io-client": "^2.3.0"
   },
@@ -19,7 +20,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "dev-server": "env $(cat .env.server) nodemon server.js"
+    "dev-server": "env $(cat .env.server) nodemon server.js",
+    "sync": "env $(cat .env.server) node sync.js"
   },
   "eslintConfig": {
     "extends": "react-app"

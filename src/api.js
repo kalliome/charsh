@@ -1,49 +1,39 @@
-let processQuery = (path, query) => {
-  if (Object.keys(query).length) {
-    let queryParts = []
+const queryString = (path, query) => {
+  let items = Object.keys(query).map(key => `${key}=${encodeURIComponent(query[key])}`)
+  if(!items.length)
+    return path
 
-    for (let key in query) {
-      let value = query[key]
-      if(Array.isArray(value)) {
-        value.forEach(val => queryParts.push(key + '[]=' + encodeURIComponent(val)))
-      } else {
-        queryParts.push(key + '=' + encodeURIComponent(value))
-      }
-    }
-
-    path = `${path}?${queryParts.join('&')}`
-  }
-
-  return path.charAt(0) !== '/' ? '/' + path : path
+  return `${path}?${items.join('&')}`
 }
 
-export default function api(method, path, params = {}, data = {}) {
-  path = processQuery(path, params)
-
-  let options = {
+const request = async (method, path, body = {}, query = {}) => {
+  let attr = {
     method,
-    headers: {
-      'Accept': 'application/json',
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    headers: {}
+  }
+  
+  if(method !== 'get') {
+    attr.headers['Content-Type'] = 'application/json;charset=utf-8'
+    attr.body = JSON.stringify(body)
   }
 
-  if(!['GET', 'HEAD'].includes(method)) {
-    options.body = data
-    delete options.headers
-  }
+  if(localStorage.token)
+    attr.headers['Authorization'] = `Bearer ${localStorage.token}`
+    
+  let res = await fetch(queryString(path, query), attr)
 
-  return fetch(path, options)
-    .then(res => {
-      if(res.status !== 200)
-        throw res
+  let data = await res.json()
 
-      return res.json()
-    })
-    .catch(err => Promise.resolve(err.json ? err.json() : err)
-    .then(data =>{
-      data._apierror = true
-      data.status = err.status
-      throw data
-    }))
+  if(res.status !== 200)
+    throw data
+
+  return data
+} 
+
+export default {
+  get: (path, query) => request('get', path, {}, query),
+  post: (path, body, query) => request('post', path, body, query),
+  put: (path, body, query) => request('put', path, body, query),
+  delete: (path, body, query) => request('delete', path, body, query),
+  request
 }

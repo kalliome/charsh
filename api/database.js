@@ -16,16 +16,21 @@ const db = {
 
 db.user = sequelize.define('user', {
   id: {
-    type: types.STRING(12),
+    type: Sequelize.INTEGER,
+    autoIncrement: true,
     primaryKey: true
   },
-  nickname: {
+  username: {
     type: types.STRING,
     allowNull: false
   },
   password: {
     type: types.STRING,
     allowNull: false
+  },
+  data: {
+    type: types.JSONB,
+    defaultValue: {}
   }
 }, {
   underscored: true
@@ -97,4 +102,23 @@ db.scene = sequelize.define('scene', {
 db.game.hasMany(db.scene)
 db.game.hasMany(db.sheet)
 
-exports.db = db
+db.game_user = sequelize.define('game_user', {
+  role: {
+    type: types.STRING,
+    defaultValue: 'player'
+  }
+}, {
+  underscored: true,
+  timestamps: false,
+  modelName: 'game_user'
+})
+
+db.game.belongsToMany(db.user, {
+  through: 'game_user'
+})
+
+db.user.belongsToMany(db.game, {
+  through: 'game_user'
+})
+
+module.exports = db

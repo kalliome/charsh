@@ -1,19 +1,29 @@
 const {
-  PORT
+  PORT,
+  NODE_ENV
 } = process.env
 
 const express = require('express')
+const bodyParser = require('body-parser')
+const { join } = require('path')
+const { initApp } = require('./api/init')
+
 const app = express()
 
-const { initApp } = require('./api/init')
+app.use(bodyParser.json())
+app.use(express.static('build'))
 
 const api = require('./api/router')
 
 app.use('/api', api)
 
-app.get('*', async (req, res) => {
+app.get('*', (req, res) => res.sendFile(join(__dirname, 'build', 'index.html')))
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500)
   res.json({
-    message: 'Hello World'
+    message: (NODE_ENV === 'development' || err.status < 500) ? err.message : 'Internal error',
+    status: err.status
   })
 })
 
